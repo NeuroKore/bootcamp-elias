@@ -12,8 +12,6 @@ public class Application {
         SpringApplication.run(Application.class, args);
 
         Beer beer = new Beer();
-
-        Beer beer = new Beer();
         beer.setBrand("Victoria");
         beer.setAbv(4.5f);
         beer.setColor("Cobre");
