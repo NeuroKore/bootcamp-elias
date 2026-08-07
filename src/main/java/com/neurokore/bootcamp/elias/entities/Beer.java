@@ -1,11 +1,13 @@
 package com.neurokore.bootcamp.elias.entities;
 
+import jakarta.persistence.Entity;
 import lombok.*;
 
 @Setter
 @Getter
 public class Beer {
 
+    private Long id;
     private String brand; //corona, victoria, hercules, delirium
     private String company; //moctezuma, heineken
     private String type; // lager, pilsner, porter, ipa
