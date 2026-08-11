@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.time.LocalDate;
+
 @Entity
 @Table(name = "beer")
 @Getter
@@ -26,7 +28,10 @@ public class BeerEntity {
     //TODO crear un campo camelcase y su homologo en SQL snakecase
     // en el scrip schema.sql
 
+    private LocalDate fechaExpiracion;
+
     //TODO crear un campo con la anotacion Column que no sigan la convecion para que hibernete lo reconozca facilmente
     // en el scrip schema.sql
-
+    @Column (name="pais_origen")
+    private String paisDeOrigen;
 }

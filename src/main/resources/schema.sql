@@ -7,5 +7,8 @@ CREATE TABLE IF NOT EXISTS beer (
     mililiters INTEGER,
     abv REAL,
     flavour VARCHAR(50),
-    olor VARCHAR(50)
+    olor VARCHAR(50),
+    fecha_expiracion DATE NOT NULL
+    pais_origen VARCHAR(50)
 );
+
