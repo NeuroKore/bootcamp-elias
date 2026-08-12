@@ -23,24 +23,24 @@ public interface BeerRepository extends JpaRepository<BeerEntity, Long> {
 
     //TODO Crear los metodos CRUD (CREAT, READ, UPDATE, DELETE) para le objeto BeerEntity
     @PersistenceContext
-    private EntityManager entityManager;
+    EntityManager entityManager = null;
 
     @Transactional
-    public void create(BeerEntity beer) {
+    public default void create(BeerEntity beer) {
         entityManager.persist(beer);
     }
 
-    public BeerEntity read (Long id) {
+    public default BeerEntity read(Long id) {
         return entityManager.find(BeerEntity.class, id);
     }
 
-    public List<BeerEntity> readAll() {
+    public default List<BeerEntity> readAll() {
         return entityManager
                 .createQuery("SELECT b FROM BeerEntity b", BeerEntity.class)
                 .getResultList()
     }
     @Transactional
-    public void delete(Long id) {
+    public default void delete(Long id) {
         BeerEntity beer = entityManager.find(BeerEntity.class, id);
         if (beer != null) {
             entityManager.remove(beer);
@@ -48,7 +48,7 @@ public interface BeerRepository extends JpaRepository<BeerEntity, Long> {
     }
 
     @Transactional
-    public BeerEntity update(BeerEntity beer) {
+    public default BeerEntity update(BeerEntity beer) {
         return entityManager.merge(beer);
     }
 
