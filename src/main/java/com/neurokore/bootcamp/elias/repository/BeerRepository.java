@@ -21,38 +21,11 @@ public interface BeerRepository extends JpaRepository<BeerEntity, Long> {
     List<BeerEntity> findByBrand(String brand);
     // Select * from beer where brand = 'corona'
 
-    //TODO Crear los metodos CRUD (CREAT, READ, UPDATE, DELETE) para le objeto BeerEntity
-    @PersistenceContext
-    EntityManager entityManager = null;
-
-    @Transactional
-    public default void create(BeerEntity beer) {
-        entityManager.persist(beer);
-    }
-
-    public default BeerEntity read(Long id) {
-        return entityManager.find(BeerEntity.class, id);
-    }
-
-    public default List<BeerEntity> readAll() {
-        return entityManager
-                .createQuery("SELECT b FROM BeerEntity b", BeerEntity.class)
-                .getResultList()
-    }
-    @Transactional
-    public default void delete(Long id) {
-        BeerEntity beer = entityManager.find(BeerEntity.class, id);
-        if (beer != null) {
-            entityManager.remove(beer);
-        }
-    }
-
-    @Transactional
-    public default BeerEntity update(BeerEntity beer) {
-        return entityManager.merge(beer);
-    }
-
-    //TODO Crear 2 metodos para busqueda de cervezas por 4 atributos que elijas
+    void create(BeerEntity beer);
+    BeerEntity read(Long id) ;
+    List<BeerEntity> readAll() ;
+    void delete(Long id) ;
+    BeerEntity update(BeerEntity beer) ;
 
     List<BeerEntity> findByBrandAndCompanyAndTypeAndFechaDeExpiracion(String brand, String company, String type, LocalDate fechaExpiracion);
     List<BeerEntity> findByFlavourAndColorAndAbvAndMililiters(String flavour, String color, float abv, int mililiters);

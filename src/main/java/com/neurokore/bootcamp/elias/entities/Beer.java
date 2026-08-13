@@ -5,7 +5,7 @@ import lombok.*;
 
 @Setter
 @Getter
-public class Beer {
+public class Beer implements AlcoholicDrink {
 
     private Long id;
     private String brand; //corona, victoria, hercules, delirium
@@ -16,5 +16,9 @@ public class Beer {
     private float abv;// 4.5, 5.5, 8.0
     private String flavour; //dulce, amargo
     private String olor; //chocolate, citricos, frutal
+
+    public void scheduleSell() {
+        System.out.println("Selling beer in schedule");
+    }
 
 }
