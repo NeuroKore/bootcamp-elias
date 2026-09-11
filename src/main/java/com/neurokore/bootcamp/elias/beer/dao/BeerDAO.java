@@ -1,6 +1,6 @@
-package com.neurokore.bootcamp.elias.dao;
+package com.neurokore.bootcamp.elias.beer.dao;
 
-import com.neurokore.bootcamp.elias.entities.Beer;
+import com.neurokore.bootcamp.elias.beer.entities.Beer;
 
 import java.util.List;
 import java.util.Optional;

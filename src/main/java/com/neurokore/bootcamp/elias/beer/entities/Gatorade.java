@@ -1,4 +1,4 @@
-package com.neurokore.bootcamp.elias.entities;
+package com.neurokore.bootcamp.elias.beer.entities;
 
 public  class Gatorade implements AlcoholicDrink {
 

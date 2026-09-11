@@ -1,7 +1,9 @@
 package com.neurokore.bootcamp.elias;
 
-import com.neurokore.bootcamp.elias.entities.*;
-import org.springframework.boot.SpringApplication;
+import com.neurokore.bootcamp.elias.beer.entities.ArtisanBeer;
+import com.neurokore.bootcamp.elias.beer.entities.Beer;
+import com.neurokore.bootcamp.elias.beer.entities.ComercialBeer;
+import com.neurokore.bootcamp.elias.beer.entities.Tequila;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 import java.time.LocalDate;

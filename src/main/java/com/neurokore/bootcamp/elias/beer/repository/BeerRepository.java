@@ -1,9 +1,6 @@
-package com.neurokore.bootcamp.elias.repository;
+package com.neurokore.bootcamp.elias.beer.repository;
 
-import com.neurokore.bootcamp.elias.entities.BeerEntity;
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.PersistenceContext;
-import jakarta.transaction.Transactional;
+import com.neurokore.bootcamp.elias.beer.entities.BeerEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

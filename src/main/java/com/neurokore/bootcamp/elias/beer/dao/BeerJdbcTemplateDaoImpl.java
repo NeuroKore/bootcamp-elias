@@ -1,6 +1,6 @@
-package com.neurokore.bootcamp.elias.dao;
+package com.neurokore.bootcamp.elias.beer.dao;
 
-import com.neurokore.bootcamp.elias.entities.Beer;
+import com.neurokore.bootcamp.elias.beer.entities.Beer;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;

@@ -1,6 +1,5 @@
-package com.neurokore.bootcamp.elias.entities;
+package com.neurokore.bootcamp.elias.beer.entities;
 
-import jakarta.persistence.Entity;
 import lombok.*;
 
 @Setter

@@ -1,4 +1,4 @@
-package com.neurokore.bootcamp.elias.dao;
+package com.neurokore.bootcamp.elias.beer.dao;
 
 public class BeerPersistenceException extends RuntimeException {
 
