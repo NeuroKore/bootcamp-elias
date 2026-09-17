@@ -28,6 +28,8 @@ public class BeerEntity {
     //TODO crear un campo camelcase y su homologo en SQL snakecase
     // en el scrip schema.sql
 
+
+
     private LocalDate fechaExpiracion;
 
     //TODO crear un campo con la anotacion Column que no sigan la convecion para que hibernete lo reconozca facilmente
