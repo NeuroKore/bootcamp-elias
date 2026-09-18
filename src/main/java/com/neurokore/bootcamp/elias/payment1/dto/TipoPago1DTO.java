@@ -4,6 +4,9 @@ import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.math.BigDecimal;
+import java.time.Instant;
+
 @Getter
 @Setter
 @Data
@@ -16,9 +19,9 @@ import lombok.Setter;
         private String claveRastreo;
         private String cuentaOrdenante;
         private String cuentaBeneficiario;
-        private int referenciaNumerica;
-        private float monto;
-        private Long tsLiquidacion;
+        private String referenciaNumerica;
+        private BigDecimal monto;
+        private Instant tsLiquidacion;
         private String conceptoPago;
         private String estado;
     }

@@ -3,8 +3,7 @@ package com.neurokore.bootcamp.elias.beer.controller;
 
 import com.neurokore.bootcamp.elias.beer.dtos.BeerDTO;
 import com.neurokore.bootcamp.elias.beer.service.BeerService;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController("/beer")
 public class BeerController {
@@ -20,5 +19,9 @@ public class BeerController {
         return beerService.save(beerDTO);
     }
 
-
+    @RequestMapping(method = RequestMethod.PUT)
+    @PutMapping
+    public BeerDTO editBeer(BeerDTO beerDTO) {
+        return beerService.save(beerDTO);
+    }
 }

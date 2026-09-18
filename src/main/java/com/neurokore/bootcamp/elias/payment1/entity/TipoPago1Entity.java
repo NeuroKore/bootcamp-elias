@@ -5,6 +5,8 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.math.BigDecimal;
+import java.time.Instant;
+import java.time.LocalDateTime;
 
 @Entity
 @Table (name = "tipo_pago1")
@@ -20,12 +22,11 @@ public class TipoPago1Entity {
     private String claveRastreo;
     private String cuentaOrdenante;
     private String cuentaBeneficiario;
-    private int referenciaNumerica;
+    private String referenciaNumerica;
     private BigDecimal monto;
-    private Long tsLiquidacion;
+    private Instant tsLiquidacion;
     private String conceptoPago;
     private String estado;
-
 
 
 }

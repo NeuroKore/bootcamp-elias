@@ -3,16 +3,17 @@ package com.neurokore.bootcamp.elias.payment1.service;
 import com.neurokore.bootcamp.elias.payment1.dto.TipoPago1DTO;
 import com.neurokore.bootcamp.elias.payment1.entity.TipoPago1Entity;
 import com.neurokore.bootcamp.elias.payment1.repository.TipoPago1Repository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 
 @Service
+@RequiredArgsConstructor
 public class TipoPago1Service {
 
-    @Autowired
-    private TipoPago1Repository repository;
+    private final TipoPago1Repository repository;
 
     public TipoPago1DTO crearPago(TipoPago1DTO dto) {
         TipoPago1Entity entity = toEntity(dto);
@@ -26,7 +27,7 @@ public class TipoPago1Service {
         entity.setCuentaOrdenante(dto.getCuentaOrdenante());
         entity.setCuentaBeneficiario(dto.getCuentaBeneficiario());
         entity.setReferenciaNumerica(dto.getReferenciaNumerica());
-        entity.setMonto(BigDecimal.valueOf(dto.getMonto()));
+        entity.setMonto(dto.getMonto());
         entity.setTsLiquidacion(dto.getTsLiquidacion());
         entity.setConceptoPago(dto.getConceptoPago());
         entity.setEstado(dto.getEstado());
@@ -40,7 +41,7 @@ public class TipoPago1Service {
         dto.setCuentaOrdenante(entity.getCuentaOrdenante());
         dto.setCuentaBeneficiario(entity.getCuentaBeneficiario());
         dto.setReferenciaNumerica(entity.getReferenciaNumerica());
-        dto.setMonto(entity.getMonto().floatValue());
+        dto.setMonto(entity.getMonto());
         dto.setTsLiquidacion(entity.getTsLiquidacion());
         dto.setConceptoPago(entity.getConceptoPago());
         dto.setEstado(entity.getEstado());
