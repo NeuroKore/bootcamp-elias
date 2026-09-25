@@ -19,4 +19,11 @@ public class TipoPago1Controller {
         TipoPago1DTO creado = service.crearPago(dto);
         return new ResponseEntity<>(creado, HttpStatus.CREATED);
     }
+
+    // TODO create Read Method
+
+    // TODO create Update Method
+
+    // TODO create Delete Method
+
 }

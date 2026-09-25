@@ -18,8 +18,11 @@ public class TipoPago1Service {
     public TipoPago1DTO crearPago(TipoPago1DTO dto) {
         TipoPago1Entity entity = toEntity(dto);
         TipoPago1Entity guardado = repository.save(entity);
+
         return toDTO(guardado);
     }
+
+    // TODO create Read Method with findById
 
     private TipoPago1Entity toEntity(TipoPago1DTO dto) {
         TipoPago1Entity entity = new TipoPago1Entity();
