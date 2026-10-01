@@ -21,9 +21,24 @@ public class TipoPago1Controller {
     }
 
     // TODO create Read Method
+    @GetMapping
+    public ResponseEntity<TipoPago1DTO> leerPago {
+        TipoPago1DTO pago = service.leerPago(dto);
+        return new ResponseEntity<>(pago, HttpStatus.OK);
+    }
 
     // TODO create Update Method
+    @PutMapping
+    public  ResponseEntity<TipoPago1DTO> actualizarPago(Long id, TipoPago1DTO dto){
+        TipoPago1DTO actualizado = service.actualizarPago(dto);
+        return new ResponseEntity<>(actualizado, HttpStatus.OK);
+    }
 
     // TODO create Delete Method
+    @DeleteMapping
+    public ResponseEntity<TipoPago1DTO> borrarPago(Long id, TipoPago1DTO dto){
+        TipoPago1DTO eliminado = service.borrarPago(dto);
+        return new ResponseEntity<>(eliminado, HttpStatus.ok);
+    }
 
 }
