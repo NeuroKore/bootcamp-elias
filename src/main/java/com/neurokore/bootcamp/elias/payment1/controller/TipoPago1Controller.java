@@ -1,12 +1,15 @@
 package com.neurokore.bootcamp.elias.payment1.controller;
 
 import com.neurokore.bootcamp.elias.payment1.dto.TipoPago1DTO;
+import com.neurokore.bootcamp.elias.payment1.entity.TipoPago1Entity;
 import com.neurokore.bootcamp.elias.payment1.service.TipoPago1Service;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/tipo-pago1")
@@ -31,7 +34,12 @@ public class TipoPago1Controller {
     }
 
     //TODO create method to read all
-    //localhost:8080/api/tipo-pago1 -> obtain a pagos list
+    @GetMapping("/findAll")
+    public ResponseEntity<List<TipoPago1DTO>> leerTodos() {
+        List<TipoPago1DTO> pagos = service.leerTodos();
+        return new ResponseEntity<>(pagos, HttpStatus.OK);
+
+    }
 
 
     // Lexica, Sintaxis y Semantica

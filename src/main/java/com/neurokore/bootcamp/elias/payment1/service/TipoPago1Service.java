@@ -10,6 +10,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -41,6 +43,29 @@ public class TipoPago1Service {
     }
 
     // TODO create Read Method for all payments
+    public List<TipoPago1DTO> leerTodos() {
+        List<TipoPago1Entity> entities = repository.findAll();
+        List<TipoPago1DTO> dtos = new ArrayList<>();
+        for (TipoPago1Entity entity : entities) {
+            dtos.add(toDTO(entity));
+        }
+        return dtos;
+    }
+
+    public TipoPago1DTO actualizarPago(Long id, TipoPago1DTO dto) {
+        TipoPago1Entity entity = repository.findById(id).orElseThrow();
+        entity.setClaveRastreo(dto.getClaveRastreo());
+        entity.setCuentaOrdenante(dto.getCuentaOrdenante());
+        entity.setCuentaBeneficiario(dto.getCuentaBeneficiario());
+        entity.setReferenciaNumerica(dto.getReferenciaNumerica());
+        entity.setMonto(BigDecimal.valueOf(dto.getMonto()));
+        entity.setTsLiquidacion(dto.getTsLiquidacion());
+        entity.setConceptoPago(dto.getConceptoPago());
+        entity.setEstado(dto.getEstado());
+        TipoPago1Entity guardado = repository.save(entity);
+
+        return  toDTO(guardado);
+    }
 
 
     private TipoPago1Entity toEntity(TipoPago1DTO dto) {
