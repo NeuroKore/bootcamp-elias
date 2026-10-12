@@ -16,7 +16,7 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 @Slf4j
-public class TipoPago1Service {
+public class TipoPago1Service implements TipoPago1 {
 
     private final TipoPago1Repository repository;
 
@@ -27,6 +27,7 @@ public class TipoPago1Service {
 
         return toDTO(guardado);
     }
+
 
     //Metodo sobrecargado
     public TipoPago1DTO crearPago(TipoPago1Request request) {
@@ -47,6 +48,7 @@ public class TipoPago1Service {
         List<TipoPago1Entity> entities = repository.findAll();
         List<TipoPago1DTO> dtos = new ArrayList<>();
         for (TipoPago1Entity entity : entities) {
+            log.info("PAGO: {}",toDTO(entity));
             dtos.add(toDTO(entity));
         }
         return dtos;
@@ -58,7 +60,7 @@ public class TipoPago1Service {
         entity.setCuentaOrdenante(dto.getCuentaOrdenante());
         entity.setCuentaBeneficiario(dto.getCuentaBeneficiario());
         entity.setReferenciaNumerica(dto.getReferenciaNumerica());
-        entity.setMonto(BigDecimal.valueOf(dto.getMonto()));
+        entity.setMonto(dto.getMonto());
         entity.setTsLiquidacion(dto.getTsLiquidacion());
         entity.setConceptoPago(dto.getConceptoPago());
         entity.setEstado(dto.getEstado());

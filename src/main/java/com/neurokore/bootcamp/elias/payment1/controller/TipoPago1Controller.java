@@ -1,10 +1,9 @@
 package com.neurokore.bootcamp.elias.payment1.controller;
 
 import com.neurokore.bootcamp.elias.payment1.dto.TipoPago1DTO;
-import com.neurokore.bootcamp.elias.payment1.entity.TipoPago1Entity;
-import com.neurokore.bootcamp.elias.payment1.service.TipoPago1Service;
+import com.neurokore.bootcamp.elias.payment1.service.TipoPago1;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -14,10 +13,10 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/tipo-pago1")
 @Slf4j
+@RequiredArgsConstructor
 public class TipoPago1Controller {
 
-    @Autowired
-    private TipoPago1Service service;
+    private TipoPago1 service;
 
     @PostMapping
     public ResponseEntity<TipoPago1DTO> crearPago(@RequestBody TipoPago1DTO dto) {
@@ -33,12 +32,10 @@ public class TipoPago1Controller {
         return new ResponseEntity<>(pago, HttpStatus.OK);
     }
 
-    //TODO create method to read all
     @GetMapping("/findAll")
     public ResponseEntity<List<TipoPago1DTO>> leerTodos() {
         List<TipoPago1DTO> pagos = service.leerTodos();
         return new ResponseEntity<>(pagos, HttpStatus.OK);
-
     }
 
 
