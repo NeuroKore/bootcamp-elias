@@ -1,0 +1,89 @@
+name: Backport a rama de integración
+
+on:
+  push:
+    branches:
+      - master
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  backport:
+    name: Backport ${{ github.ref_name }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Configurar Git
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Resolver rama destino
+        id: config
+        run: |
+          MAP="master->develop"
+          SOURCE="${{ github.ref_name }}"
+          TARGET=""
+          IFS=',' read -ra PAIRS <<< "$MAP"
+          for PAIR in "${PAIRS[@]}"; do
+            SRC="${PAIR%%->*}"
+            TGT="${PAIR##*->}"
+            [ "$SRC" = "$SOURCE" ] && TARGET="$TGT" && break
+          done
+          if [ -z "$TARGET" ]; then
+            echo "Rama $SOURCE sin destino configurado en BACKPORT_MAP"
+            exit 1
+          fi
+          echo "target=$TARGET" >> "$GITHUB_OUTPUT"
+
+      - name: Crear backport PR
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TRIGGER_SHA: ${{ github.sha }}
+          TRIGGER_MSG: ${{ github.event.head_commit.message }}
+        run: |
+          SOURCE="${{ github.ref_name }}"
+          TARGET="${{ steps.config.outputs.target }}"
+          TIMESTAMP=$(date -u +"%m.%d.%H.%M.%S.%3N")
+          BACKPORT_BRANCH="backport/${SOURCE}_${TIMESTAMP}"
+
+          git fetch origin "$TARGET"
+          COMMITS=$(git log "origin/$TARGET..origin/$SOURCE" --no-merges --format="%H" | tac)
+          git checkout -b "$BACKPORT_BRANCH" "origin/$TARGET"
+
+          if [ -n "$COMMITS" ]; then
+            COMMIT_COUNT=$(echo "$COMMITS" | wc -l | tr -d ' ')
+            for COMMIT in $COMMITS; do
+              if ! git cherry-pick "$COMMIT"; then
+                echo "::error::Cherry-pick falló en $COMMIT — backport manual requerido."
+                exit 1
+              fi
+            done
+            printf '%s\n\n%s\n%s\n\n%s\n' \
+              "Backport automático: **${COMMIT_COUNT} commit(s)** de \`${SOURCE}\` → \`${TARGET}\`." \
+              "**Trigger:** \`${TRIGGER_SHA}\`" \
+              "**Mensaje:** ${TRIGGER_MSG}" \
+              "> Revisar y mergear para mantener \`${TARGET}\` sincronizado con producción." \
+              > /tmp/pr_body.md
+          else
+            git commit --allow-empty -m "chore: backport sync confirmation [${TIMESTAMP}]"
+            printf '%s\n\n%s\n\n%s\n' \
+              "Sin commits nuevos — \`${TARGET}\` está sincronizado con \`${SOURCE}\`." \
+              "**Trigger:** \`${TRIGGER_SHA}\`" \
+              "> PR de confirmación. Puede mergearse directamente." \
+              > /tmp/pr_body.md
+          fi
+
+          git push origin "$BACKPORT_BRANCH"
+          gh pr create \
+            --base "$TARGET" \
+            --head "$BACKPORT_BRANCH" \
+            --title "backport: ${SOURCE} → ${TARGET} [${TIMESTAMP}]" \
+            --body-file /tmp/pr_body.md

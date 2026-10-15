@@ -1,0 +1,111 @@
+name: Versionado automático
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, closed]
+    branches: [master]
+
+permissions:
+  contents: write
+
+jobs:
+  version:
+    name: Crear versión
+    runs-on: ubuntu-latest
+    if: startsWith(github.head_ref, 'release/') || startsWith(github.head_ref, 'hotfix/')
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Detectar tipo de branch
+        id: detect
+        run: |
+          HEAD="${{ github.head_ref }}"
+          if echo "$HEAD" | grep -qE '^release/'; then
+            echo "type=release" >> "$GITHUB_OUTPUT"
+            echo "suffix=rc" >> "$GITHUB_OUTPUT"
+          else
+            echo "type=hotfix" >> "$GITHUB_OUTPUT"
+            echo "suffix=hotfix" >> "$GITHUB_OUTPUT"
+          fi
+          EXPLICIT=$(echo "$HEAD" | grep -oP '(?<=/)\d+\.\d+\.\d+$' || true)
+          echo "explicit=$EXPLICIT" >> "$GITHUB_OUTPUT"
+
+      - name: Calcular versión base
+        id: semver
+        run: |
+          git fetch --tags
+          EXPLICIT="${{ steps.detect.outputs.explicit }}"
+          TYPE="${{ steps.detect.outputs.type }}"
+
+          if [ -n "$EXPLICIT" ]; then
+            echo "version=$EXPLICIT" >> "$GITHUB_OUTPUT"
+          else
+            LATEST=$(git tag -l 'v[0-9]*.[0-9]*.[0-9]*' \
+              | grep -vE -- '-(rc|hotfix|test)\.' \
+              | sort -V | tail -1 | tr -d 'v')
+
+            if [ -z "$LATEST" ]; then
+              MAJOR=0; MINOR=0; PATCH=0
+            else
+              MAJOR=$(echo "$LATEST" | cut -d. -f1)
+              MINOR=$(echo "$LATEST" | cut -d. -f2)
+              PATCH=$(echo "$LATEST" | cut -d. -f3)
+            fi
+
+            if [ "$TYPE" = "release" ]; then
+              MINOR=$((MINOR + 1)); PATCH=0
+            else
+              PATCH=$((PATCH + 1))
+            fi
+            echo "version=${MAJOR}.${MINOR}.${PATCH}" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Crear pre-release
+        if: github.event.action != 'closed'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          VERSION="${{ steps.semver.outputs.version }}"
+          SUFFIX="${{ steps.detect.outputs.suffix }}"
+          git fetch --tags
+          COUNT=$(git tag -l "v${VERSION}-${SUFFIX}.*" | wc -l | tr -d ' ')
+          N=$((COUNT + 1))
+          TAG="v${VERSION}-${SUFFIX}.${N}"
+
+          if git tag -l "$TAG" | grep -q "$TAG"; then
+            echo "Tag $TAG ya existe, omitiendo"
+            exit 0
+          fi
+
+          git tag "$TAG" "${{ github.event.pull_request.head.sha }}"
+          git push origin "$TAG"
+          gh release create "$TAG" \
+            --title "$TAG" \
+            --prerelease \
+            --target "${{ github.event.pull_request.head.sha }}" \
+            --notes "Pre-release desde \`${{ github.head_ref }}\` (PR #${{ github.event.pull_request.number }})"
+
+      - name: Crear release de producción
+        if: github.event.action == 'closed' && github.event.pull_request.merged == true
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          VERSION="${{ steps.semver.outputs.version }}"
+          TAG="v${VERSION}"
+          git fetch --tags
+
+          if git tag -l "$TAG" | grep -q "$TAG"; then
+            echo "::error::La versión $TAG ya existe."
+            exit 1
+          fi
+
+          git tag "$TAG" "${{ github.sha }}"
+          git push origin "$TAG"
+          gh release create "$TAG" \
+            --title "$TAG" \
+            --target "${{ github.sha }}" \
+            --notes "Release desde \`${{ github.head_ref }}\` (PR #${{ github.event.pull_request.number }})"

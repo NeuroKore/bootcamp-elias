@@ -1,0 +1,63 @@
+name: Build de prueba
+
+on:
+  workflow_dispatch:
+    inputs:
+      reason:
+        description: Motivo del build (opcional)
+        required: false
+        type: string
+
+permissions:
+  contents: write
+
+jobs:
+  build-test:
+    name: Crear versión de prueba
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Calcular versión de prueba
+        id: semver
+        run: |
+          git fetch --tags
+          LATEST=$(git tag -l 'v[0-9]*.[0-9]*.[0-9]*' \
+            | grep -vE -- '-(rc|hotfix|test)\.' \
+            | sort -V | tail -1 | tr -d 'v')
+
+          if [ -z "$LATEST" ]; then
+            MAJOR=0; MINOR=0; PATCH=1
+          else
+            MAJOR=$(echo "$LATEST" | cut -d. -f1)
+            MINOR=$(echo "$LATEST" | cut -d. -f2)
+            PATCH=$(echo "$LATEST" | cut -d. -f3)
+            PATCH=$((PATCH + 1))
+          fi
+
+          VERSION="${MAJOR}.${MINOR}.${PATCH}"
+          COUNT=$(git tag -l "v${VERSION}-test.*" | wc -l | tr -d ' ')
+          N=$((COUNT + 1))
+          echo "tag=v${VERSION}-test.${N}" >> "$GITHUB_OUTPUT"
+
+      - name: Crear tag y pre-release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          TAG="${{ steps.semver.outputs.tag }}"
+          BRANCH="${{ github.ref_name }}"
+          NOTES="Build de prueba desde \`${BRANCH}\`."
+          if [ -n "${{ inputs.reason }}" ]; then
+            NOTES="${NOTES} Motivo: ${{ inputs.reason }}"
+          fi
+          git tag "$TAG" "${{ github.sha }}"
+          git push origin "$TAG"
+          gh release create "$TAG" \
+            --title "$TAG" \
+            --prerelease \
+            --target "${{ github.sha }}" \
+            --notes "$NOTES"
