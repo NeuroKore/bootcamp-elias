@@ -1,0 +1,36 @@
+name: Deploy
+
+on:
+  push:
+    tags:
+      - 'v[0-9]*.[0-9]*.[0-9]*'   # Auto: tag de producción creado por auto-version.yml
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "Tag a desplegar — solo producción: vX.Y.Z · vX.Y.Z-rc.N · vX.Y.Z-hotfix.N"
+        required: true
+        type: string
+
+jobs:
+  deploy:
+    name: Deploy ${{ inputs.tag || github.ref_name }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Validar tag de producción
+        run: |
+          TAG="${{ inputs.tag || github.ref_name }}"
+          if ! echo "$TAG" | grep -qE '^v[0-9]+\.[0-9]+\.[0-9]+(-(rc|hotfix)\.[0-9]+)?$'; then
+            echo "::error::Tag '$TAG' no es válido para producción. Permitidos: vX.Y.Z · vX.Y.Z-rc.N · vX.Y.Z-hotfix.N"
+            exit 1
+          fi
+
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.tag || github.ref_name }}
+
+      # TODO: implementar el paso de deploy
+      # Ejemplo Docker: docker pull <registry>/<image>:${{ inputs.tag || github.ref_name }}
+      # Ejemplo SSH:    ssh deploy@host "deploy.sh ${{ inputs.tag || github.ref_name }}"
+      - name: Deploy
+        run: echo "Deploy de ${{ inputs.tag || github.ref_name }} — implementar este paso"
