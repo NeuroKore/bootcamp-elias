@@ -1,0 +1,10 @@
+services:
+  postgres:
+    image: postgres:16
+    container_name: bootcamp-elias-postgres
+    environment:
+      POSTGRES_DB: beerdb
+      POSTGRES_USER: beer_user
+      POSTGRES_PASSWORD: beer_pass
+    ports:
+      - "5431:5432"
