@@ -10,14 +10,33 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+/**
+ * Controlador REST para la gestión de pagos tipo 1.
+ *
+ * <p>Expone los endpoints bajo {@code /api/tipo-pago1} y delega la lógica
+ * en {@link TipoPago1}, devolviendo {@link TipoPago1DTO} en las respuestas.</p>
+ *
+ * <p>Nota: el campo {@code service} no es {@code final} y no se inyecta
+ * mediante el constructor generado por {@code @RequiredArgsConstructor}.</p>
+ *
+ * @author NeuroKore
+ * @see TipoPago1
+ */
 @RestController
 @RequestMapping("/api/tipo-pago1")
 @Slf4j
 @RequiredArgsConstructor
 public class TipoPago1Controller {
 
+    /** Servicio de pagos tipo 1 al que se delegan las operaciones. */
     private TipoPago1 service;
 
+    /**
+     * Registra un nuevo pago.
+     *
+     * @param dto datos del pago a crear
+     * @return respuesta con el pago creado y estado {@code 201 CREATED}
+     */
     @PostMapping
     public ResponseEntity<TipoPago1DTO> crearPago(@RequestBody TipoPago1DTO dto) {
         log.info("Creando tipo-pago1 con referencia: {} ", dto.getReferenciaNumerica());
@@ -26,12 +45,24 @@ public class TipoPago1Controller {
     }
 
     //localhost:8080/api/tipo-pago1/1
+    /**
+     * Obtiene un pago por su identificador.
+     *
+     * @param id identificador del pago
+     * @return respuesta con el pago encontrado y estado {@code 200 OK}
+     * @throws java.util.NoSuchElementException si no existe un pago con ese {@code id}
+     */
     @GetMapping("/{idPago}")
     public ResponseEntity<TipoPago1DTO> leerPago (@PathVariable("idPago") Long id) {
         TipoPago1DTO pago = service.leerPago(id);
         return new ResponseEntity<>(pago, HttpStatus.OK);
     }
 
+    /**
+     * Obtiene todos los pagos registrados.
+     *
+     * @return respuesta con la lista de pagos y estado {@code 200 OK}
+     */
     @GetMapping("/findAll")
     public ResponseEntity<List<TipoPago1DTO>> leerTodos() {
         List<TipoPago1DTO> pagos = service.leerTodos();

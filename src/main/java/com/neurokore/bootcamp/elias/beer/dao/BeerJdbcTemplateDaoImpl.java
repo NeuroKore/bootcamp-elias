@@ -13,15 +13,33 @@ import java.sql.Statement;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * Implementación de {@link BeerDAO} con {@link JdbcTemplate}.
+ *
+ * <p>Delega la gestión de conexiones y excepciones en Spring JDBC.</p>
+ *
+ * @author NeuroKore
+ */
 @Repository("beerDaoJdbcTemplate")
 public class BeerJdbcTemplateDaoImpl implements BeerDAO {
 
     private final JdbcTemplate jdbcTemplate;
 
+    /**
+     * Construye el DAO con sus dependencias.
+     *
+     * @param jdbcTemplate plantilla JDBC {@link JdbcTemplate}
+     */
     public BeerJdbcTemplateDaoImpl(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
     }
 
+    /**
+     * Inserta una cerveza y asigna el identificador generado.
+     *
+     * @param beer cerveza a insertar {@link Beer}
+     * @return la cerveza con su identificador asignado {@link Beer}
+     */
     @Override
     public Beer save(Beer beer) {
         String sql = "INSERT INTO beer (brand, company, type, color, mililiters, abv, flavour, olor) "
@@ -43,6 +61,12 @@ public class BeerJdbcTemplateDaoImpl implements BeerDAO {
         return beer;
     }
 
+    /**
+     * Busca una cerveza por su identificador.
+     *
+     * @param id identificador de la cerveza
+     * @return {@link Optional} con la cerveza, o vacío si no existe
+     */
     @Override
     public Optional<Beer> findById(Long id) {
         String sql = "SELECT id, brand, company, type, color, mililiters, abv, flavour, olor "
@@ -50,12 +74,23 @@ public class BeerJdbcTemplateDaoImpl implements BeerDAO {
         return jdbcTemplate.query(sql, this::mapRow, id).stream().findFirst();
     }
 
+    /**
+     * Obtiene todas las cervezas.
+     *
+     * @return lista de cervezas {@link Beer}
+     */
     @Override
     public List<Beer> findAll() {
         String sql = "SELECT id, brand, company, type, color, mililiters, abv, flavour, olor FROM beer";
         return jdbcTemplate.query(sql, this::mapRow);
     }
 
+    /**
+     * Actualiza una cerveza existente.
+     *
+     * @param beer cerveza con los datos actualizados {@link Beer}
+     * @return la cerveza actualizada {@link Beer}
+     */
     @Override
     public Beer update(Beer beer) {
         String sql = "UPDATE beer SET brand = ?, company = ?, type = ?, color = ?, mililiters = ?, "
@@ -65,6 +100,11 @@ public class BeerJdbcTemplateDaoImpl implements BeerDAO {
         return beer;
     }
 
+    /**
+     * Elimina una cerveza por su identificador.
+     *
+     * @param id identificador de la cerveza
+     */
     @Override
     public void deleteById(Long id) {
         jdbcTemplate.update("DELETE FROM beer WHERE id = ?", id);
