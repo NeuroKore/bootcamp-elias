@@ -13,15 +13,35 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * Implementación de {@link BeerDAO} con JDBC puro.
+ *
+ * <p>Usa {@link DataSource} y {@link PreparedStatement}; los errores SQL se
+ * envuelven en {@link BeerPersistenceException}.</p>
+ *
+ * @author NeuroKore
+ */
 @Repository("beerDaoJdbc")
 public class BeerDAOImpl implements BeerDAO {
 
     private final DataSource dataSource;
 
+    /**
+     * Construye el DAO con sus dependencias.
+     *
+     * @param dataSource origen de conexiones {@link DataSource}
+     */
     public BeerDAOImpl(DataSource dataSource) {
         this.dataSource = dataSource;
     }
 
+    /**
+     * Inserta una cerveza y asigna el identificador generado.
+     *
+     * @param beer cerveza a insertar {@link Beer}
+     * @return la cerveza con su identificador asignado {@link Beer}
+     * @throws BeerPersistenceException si ocurre un error SQL al guardar
+     */
     @Override
     public Beer save(Beer beer) {
         String sql = "INSERT INTO beer (brand, company, type, color, mililiters, abv, flavour, olor) "
@@ -41,6 +61,13 @@ public class BeerDAOImpl implements BeerDAO {
         }
     }
 
+    /**
+     * Busca una cerveza por su identificador.
+     *
+     * @param id identificador de la cerveza
+     * @return {@link Optional} con la cerveza, o vacío si no existe
+     * @throws BeerPersistenceException si ocurre un error SQL al buscar
+     */
     @Override
     public Optional<Beer> findById(Long id) {
         String sql = "SELECT id, brand, company, type, color, mililiters, abv, flavour, olor "
@@ -59,6 +86,12 @@ public class BeerDAOImpl implements BeerDAO {
         }
     }
 
+    /**
+     * Obtiene todas las cervezas.
+     *
+     * @return lista de cervezas {@link Beer}
+     * @throws BeerPersistenceException si ocurre un error SQL al listar
+     */
     @Override
     public List<Beer> findAll() {
         String sql = "SELECT id, brand, company, type, color, mililiters, abv, flavour, olor FROM beer";
@@ -75,6 +108,13 @@ public class BeerDAOImpl implements BeerDAO {
         }
     }
 
+    /**
+     * Actualiza una cerveza existente.
+     *
+     * @param beer cerveza con los datos actualizados {@link Beer}
+     * @return la cerveza actualizada {@link Beer}
+     * @throws BeerPersistenceException si ocurre un error SQL al actualizar
+     */
     @Override
     public Beer update(Beer beer) {
         String sql = "UPDATE beer SET brand = ?, company = ?, type = ?, color = ?, mililiters = ?, "
@@ -90,6 +130,12 @@ public class BeerDAOImpl implements BeerDAO {
         }
     }
 
+    /**
+     * Elimina una cerveza por su identificador.
+     *
+     * @param id identificador de la cerveza
+     * @throws BeerPersistenceException si ocurre un error SQL al eliminar
+     */
     @Override
     public void deleteById(Long id) {
         String sql = "DELETE FROM beer WHERE id = ?";
